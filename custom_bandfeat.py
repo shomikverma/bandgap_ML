@@ -44,8 +44,10 @@ class BandFeaturizer(BaseFeaturizer):
         nbands (int): the number of valence/conduction bands to be featurized
     """
 
-    def __init__(self, find_method='nearest', nbands=2):
+    def __init__(self, find_method='nearest', curvmode='stat', nbands=2):
+        assert curvmode == 'stat' or curvmode == 'vals'
         self.find_method = find_method
+        self.mode = curvmode # 'stat' - return curvature mean/min/max / 'vals' - return curvature values 
         self.nbands = nbands
 
         # Due to a bug in the multiprocessing library, featurizing large numbers
@@ -126,8 +128,8 @@ class BandFeaturizer(BaseFeaturizer):
             dk = np.linalg.norm(bs.kpoints[kpoint_index].cart_coords - bs.kpoints[kpoint_index - 1].cart_coords)
             cbm_curvature = finite_second_derivative(pts, dk)
             cbm_curvs.append(cbm_curvature)
-            
-            # feat[f"{bidx}_cbm_curv"] = cbm_curvature # Uncomment to add directly to returned feature dict
+            if self.mode == 'vals':
+                feat[f"{bidx}_cbm_curv"] = cbm_curvature
             
         
         vbm_info = bs.get_vbm()
@@ -140,17 +142,18 @@ class BandFeaturizer(BaseFeaturizer):
             dk = np.linalg.norm(bs.kpoints[kpoint_index].cart_coords - bs.kpoints[kpoint_index - 1].cart_coords)
             vbm_curvature = finite_second_derivative(pts, dk)
             vbm_curvs.append(vbm_curvature)
-            
-            # feat[f"{bidx}_vbm_curv"] = vbm_curvature # Uncomment to add directly to returned feature dict
-            
-        feat["N_cbm"] = len(cbm_curvs)
-        feat["mean_cbm_curv"] = np.mean(cbm_curvs)
-        feat["min_cbm_curv"] = np.min(cbm_curvs)
-        feat["max_cbm_curv"= = np.max(cbm_curvs)
-        feat["N_vbm"] = len(vbm_curvs)
-        feat["mean_vbm_curv"] = np.mean(vbm_curvs)
-        feat["min_vbm_curv"] = np.min(vbm_curvs)
-        feat["max_vbm_curv"] = np.max(vbm_curvs)
+            if self.mode == 'vals':
+                feat[f"{bidx}_vbm_curv"] = vbm_curvature
+        
+        if self.mode == 'stat':
+            feat["N_cbm"] = len(cbm_curvs)
+            feat["mean_cbm_curv"] = np.mean(cbm_curvs)
+            feat["min_cbm_curv"] = np.min(cbm_curvs)
+            feat["max_cbm_curv"= = np.max(cbm_curvs)
+            feat["N_vbm"] = len(vbm_curvs)
+            feat["mean_vbm_curv"] = np.mean(vbm_curvs)
+            feat["min_vbm_curv"] = np.min(vbm_curvs)
+            feat["max_vbm_curv"] = np.max(vbm_curvs)
 
         return feat    
     
