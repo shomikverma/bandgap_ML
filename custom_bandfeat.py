@@ -149,7 +149,7 @@ class BandFeaturizer(BaseFeaturizer):
             feat["N_cbm"] = len(cbm_curvs)
             feat["mean_cbm_curv"] = np.mean(cbm_curvs)
             feat["min_cbm_curv"] = np.min(cbm_curvs)
-            feat["max_cbm_curv"= = np.max(cbm_curvs)
+            feat["max_cbm_curv"] = np.max(cbm_curvs)
             feat["N_vbm"] = len(vbm_curvs)
             feat["mean_vbm_curv"] = np.mean(vbm_curvs)
             feat["min_vbm_curv"] = np.min(vbm_curvs)
