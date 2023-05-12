@@ -13,8 +13,6 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from scipy.interpolate import griddata
 
 from matminer.featurizers.base import BaseFeaturizer
-
-__author__ = "Anubhav Jain <ajain@lbl.gov>, Jade Chongsathapornpong"
         
 def finite_second_derivative(E, dk: float) -> float:
     """5-point stencil for 2nd derivative, assumes equally-spaced points
@@ -29,7 +27,7 @@ def finite_second_derivative(E, dk: float) -> float:
 
 class BandFeaturizer(BaseFeaturizer):
     """
-    Featurizes a pymatgen band structure object.
+    Featurizes a pymatgen band structure object. Modified version of matminer BandFeaturizer.
 
     Args:
         kpoints ([1x3 numpy array]): list of fractional coordinates of
